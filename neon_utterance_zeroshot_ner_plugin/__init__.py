@@ -39,18 +39,20 @@ class TarsZeroShotNER(UtteranceTransformer):
         self.tars.add_and_switch_to_new_task('zeroshot ner', self.labels, label_type='ner')
 
     def transform(self, utterances, context=None):
-        preds = []
+        entities = {}
         for utt in utterances:
             sentence = Sentence(utt)
             self.tars.predict(sentence)
-
-            preds.append([{"entity": span.labels[0].value,
-                           "value": span.text,
-                           "source_text": utt,
-                           "span": (span.start_pos, span.end_pos)}
-                          for span in sentence.get_spans()])
+            for span in sentence.get_spans():
+                ent = span.labels[0].value
+                if ent not in entities:
+                    entities[ent] = []
+                entities[ent].append(
+                    {"entity": span.labels[0].value,
+                     "value": span.text,
+                     "source_text": utt,
+                     "span": (span.start_pos, span.end_pos)})
 
         # return unchanged utterances + data
-        return utterances, {"zeroshot_ner": preds}
-
+        return utterances, {"zeroshot_ner": entities}
 
