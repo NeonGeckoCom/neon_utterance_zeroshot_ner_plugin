@@ -1,6 +1,11 @@
 ```python
 tars = TarsZeroShotNER()
 
+# this usually comes from mycroft.conf and is set by transformers service
+# labels can be anything, no training needed (zero shot learning)
+# the labels in this example are the default values if not set
+tars.config = { "labels": ["Organization", "Vehicle", "Location", "City", "Country", "Person"]}
+
 utts = ["The Humboldt University of Berlin is situated near the Spree in Berlin, Germany",
         "The president of Portugal is Marcelo Rebelo de Sousa"]
 
